@@ -1,15 +1,10 @@
 //basically the bouncer/protector middleware that checks if the user is authenticated 
 // before allowing access to protected routes
 const jwt = require("jsonwebtoken");
-const { redisClient } = require("../config/redis");
 const User = require("../models/user");
 
 const sendError   = (res, status, message) => {
   res.status(status).json({ success: false, message });
-};
-
-const sendSuccess = (res, status, message, data = {}) => {
-  res.status(status).json({ success: true, message, ...data });
 };
 
 const protect = async (req, res, next) => {
@@ -28,12 +23,6 @@ const protect = async (req, res, next) => {
   try {
     // verify the token and decode it to get the user ID and other information
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // check if session exists in Redis
-    const cachedToken = await redisClient.get(`session:${decoded.id}`);
-    if (!cachedToken || cachedToken !== token) {
-      return sendError(res, 401, "Session expired or logged out");
-    }
 
     // find the user by ID from the decoded token
     const user = await User.findById(decoded.id);
