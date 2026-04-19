@@ -91,9 +91,4 @@ const getProfile = async (req, res) => {
   }
 };
 
-// route for logging out => POST => /api/auth/logout
-const logout = (_req, res) => {
-  sendSuccess(res, 200, "Logged out successfully- remove token from local storage on client side");
-};
-
-module.exports = { signUp, login, getProfile, logout };
+module.exports = { signUp, login, getProfile};
